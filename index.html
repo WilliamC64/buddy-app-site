@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddy Companion</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <meta name="description" content="Buddy companion: relatable buddies from every generation and accent across America." />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Buddy" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png" />
+</head>
+<body>
+  <div id="welcome-screen" class="welcome-screen">
+    <div class="welcome-content">
+      <div class="trucker-emoji">💻</div>
+      <h1>Buddy</h1>
+      <p class="welcome-tagline">Always with you.<br>Built for every generation. Every accent. Every story across America.<br>Including Kai from the Pacific Northwest.</p>
+      <button type="button" id="trucker-card" class="trucker-card" data-voice="trucker" aria-label="Hear The Trucker">
+        <span class="trucker-avatar" aria-hidden="true">🚚</span>
+        <span>
+          <strong>The Trucker</strong>
+          <span class="trucker-card-text">Rides shotgun on the long haul… keeping you company every mile.</span>
+          <span class="trucker-card-hint">🔊 Tap to hear The Trucker</span>
+        </span>
+      </button>
+      <p id="load-note" class="device-note hidden" style="color:#ffd7e0;"></p>
+      <p class="device-note" style="opacity:0.75;color:#dbe4ff;">Open this file from the Buddy-app folder so css/, js/, and voices/ stay together.</p>
+      <button type="button" id="start-btn" class="primary-btn">Choose Your Buddy →</button>
+    </div>
+  </div>
+
+  <div id="main-app" class="main-app hidden">
+    <header>
+      <div class="logo">Buddy</div>
+      <p class="tagline">Someone you can relate to. Someone you can trust.</p>
+    </header>
+    <main>
+      <section class="filters">
+        <button class="filter-btn active" data-gen="all">All</button>
+        <button class="filter-btn" data-gen="young">Young / Gen Z</button>
+        <button class="filter-btn" data-gen="mid">Mid-Work</button>
+        <button class="filter-btn" data-gen="older">Older</button>
+      </section>
+      <section class="filters">
+        <button class="filter-btn active" data-region="all">All Regions</button>
+        <button class="filter-btn" data-region="Northeast">Northeast</button>
+        <button class="filter-btn" data-region="South">South</button>
+        <button class="filter-btn" data-region="Midwest">Midwest</button>
+        <button class="filter-btn" data-region="West">West</button>
+        <button class="filter-btn" data-region="Southwest">Southwest</button>
+      </section>
+      <section class="filters">
+        <button class="filter-btn active" data-interest="all">All Interests</button>
+        <button class="filter-btn" data-interest="tech">Tech</button>
+        <button class="filter-btn" data-interest="surfing">Surfing</button>
+        <button class="filter-btn" data-interest="creating">Creating</button>
+        <button class="filter-btn" data-interest="gaming">Gaming</button>
+        <button class="filter-btn" data-interest="trades">Trades</button>
+        <button class="filter-btn" data-interest="nursing">Nursing</button>
+        <button class="filter-btn" data-interest="farming">Farming</button>
+      </section>
+      <section id="buddy-grid" class="buddy-grid"></section>
+      <section id="selected-panel" class="selected-panel hidden">
+        <div id="selected-buddy-info"></div>
+        <div id="excitement-bar" class="excitement-bar">
+          <button type="button" id="excite-btn" class="excite-btn">🎉 Get Excited!</button>
+          <div id="excite-levels" class="excite-levels" role="group" aria-label="Excitement level">
+            <button type="button" class="excite-level" data-level="mild" aria-pressed="false">Mild</button>
+            <button type="button" class="excite-level" data-level="medium" aria-pressed="true">Medium</button>
+            <button type="button" class="excite-level" data-level="wild" aria-pressed="false">Wild</button>
+          </div>
+          <p id="excite-line" class="excite-line" role="status" aria-live="polite"></p>
+        </div>
+        <div id="buddy-customize" class="buddy-customize">
+          <div class="customize-field">
+            <label for="custom-name-input">Name your buddy</label>
+            <input type="text" id="custom-name-input" class="text-input" maxlength="40" autocomplete="off" spellcheck="false" />
+            <p class="helper-text">Optional. Leave blank to keep the default name.</p>
+          </div>
+          <div class="customize-field">
+            <label for="origin-select">Where is your buddy from?</label>
+            <select id="origin-select" class="select-input"></select>
+            <label class="checkbox-row" for="lives-in-us">
+              <input type="checkbox" id="lives-in-us" checked />
+              <span>Born there, now living in the United States</span>
+            </label>
+            <p class="helper-text">Your buddy can be from this background while living in the U.S.; accent and phrasing reflect their roots.</p>
+          </div>
+          <section id="personality-section" class="customize-field personality-section" aria-labelledby="personality-heading">
+            <div class="personality-header">
+              <h4 id="personality-heading">Personality</h4>
+              <button type="button" id="personality-reset" class="secondary-btn">Reset to default</button>
+            </div>
+            <div id="personality-presets" class="personality-presets" role="group" aria-labelledby="presets-heading">
+              <div class="presets-header">
+                <h5 id="presets-heading">Presets</h5>
+                <p id="preset-indicator" class="preset-indicator" aria-live="polite">Active: <strong id="preset-indicator-name">Balanced</strong></p>
+              </div>
+              <div id="preset-buttons" class="preset-buttons"></div>
+              <div id="custom-preset-area" class="custom-preset-area">
+                <p id="custom-presets-label" class="helper-text custom-presets-label hidden">My presets</p>
+                <div id="custom-preset-buttons" class="preset-buttons" role="group" aria-labelledby="custom-presets-label"></div>
+                <button type="button" id="save-preset-btn" class="secondary-btn save-preset-btn" aria-expanded="false" aria-controls="save-preset-form">＋ Save as my preset</button>
+                <div id="save-preset-form" class="save-preset-form hidden">
+                  <label for="preset-name-input" class="visually-hidden">Preset name</label>
+                  <input type="text" id="preset-name-input" class="text-input preset-name-input" maxlength="24" autocomplete="off" spellcheck="false" placeholder="Name this mix (e.g. Road Trip)" />
+                  <button type="button" id="preset-name-save" class="primary-btn preset-form-btn">Save</button>
+                  <button type="button" id="preset-name-cancel" class="secondary-btn">Cancel</button>
+                  <p id="preset-error" class="preset-error hidden" role="alert"></p>
+                </div>
+              </div>
+            </div>
+            <p class="helper-text">Tap a preset or slide toward the side that fits your buddy. The middle (50) is balanced.</p>
+            <div id="personality-sliders" class="personality-sliders"></div>
+          </section>
+          <section id="roleplay-section" class="customize-field roleplay-section" aria-labelledby="roleplay-heading">
+            <div class="personality-header">
+              <h4 id="roleplay-heading">🎭 Role Play</h4>
+              <button type="button" id="roleplay-toggle" class="secondary-btn roleplay-toggle" aria-pressed="false" aria-controls="roleplay-body">Start role play</button>
+            </div>
+            <p id="roleplay-status" class="helper-text" aria-live="polite">Practice a conversation: your buddy plays a character in a scene while keeping their name, personality, and accent.</p>
+            <div id="roleplay-body" class="roleplay-body hidden">
+              <h5 class="roleplay-subheading" id="scenario-heading">Pick a scenario</h5>
+              <div id="scenario-list" class="scenario-list" role="group" aria-labelledby="scenario-heading"></div>
+              <p id="custom-scenarios-label" class="helper-text custom-presets-label hidden">My scenarios</p>
+              <div id="custom-scenario-list" class="scenario-list" role="group" aria-labelledby="custom-scenarios-label"></div>
+              <button type="button" id="custom-scenario-btn" class="secondary-btn save-preset-btn" aria-expanded="false" aria-controls="custom-scenario-form">＋ Custom scenario</button>
+              <div id="custom-scenario-form" class="custom-scenario-form hidden">
+                <label for="custom-scenario-title">Title <span class="helper-text">(optional)</span></label>
+                <input type="text" id="custom-scenario-title" class="text-input" maxlength="40" autocomplete="off" placeholder="e.g. Hardware Store" />
+                <label for="custom-scenario-setting">Setting</label>
+                <input type="text" id="custom-scenario-setting" class="text-input" maxlength="160" autocomplete="off" placeholder="e.g. A small-town hardware store on a Saturday" />
+                <label for="custom-scenario-role">Buddy's role</label>
+                <input type="text" id="custom-scenario-role" class="text-input" maxlength="60" autocomplete="off" placeholder="e.g. a helpful store clerk" />
+                <label for="custom-scenario-user-role">Your role <span class="helper-text">(optional)</span></label>
+                <input type="text" id="custom-scenario-user-role" class="text-input" maxlength="60" autocomplete="off" placeholder="e.g. a customer looking for tools" />
+                <div class="custom-scenario-actions">
+                  <button type="button" id="custom-scenario-save" class="primary-btn preset-form-btn">Save scenario</button>
+                  <button type="button" id="custom-scenario-cancel" class="secondary-btn">Cancel</button>
+                </div>
+                <p id="custom-scenario-error" class="preset-error hidden" role="alert"></p>
+              </div>
+              <div id="scenario-details" class="scenario-details hidden">
+                <p id="scenario-summary" class="scenario-summary"></p>
+                <div class="learn-lines-header">
+                  <h5 class="roleplay-subheading" id="learn-lines-heading">🗣️ Learn lines</h5>
+                  <button type="button" id="play-all-lines" class="secondary-btn save-preset-btn">▶ Play all</button>
+                </div>
+                <p id="learn-lines-note" class="helper-text hidden"></p>
+                <ul id="learn-lines" class="learn-lines" aria-labelledby="learn-lines-heading"></ul>
+              </div>
+            </div>
+          </section>
+          <section id="study-section" class="customize-field study-section" aria-labelledby="study-heading">
+            <div class="personality-header">
+              <h4 id="study-heading">📚 Study Buddy</h4>
+              <button type="button" id="study-toggle" class="secondary-btn study-toggle" aria-pressed="false" aria-controls="study-body">Start Study Buddy</button>
+            </div>
+            <p id="study-status" class="helper-text" aria-live="polite">Your buddy becomes an encouraging tutor: questions and hints, never doing the work for you.</p>
+            <div id="study-body" class="roleplay-body hidden">
+              <div id="questionnaire-form" class="questionnaire-form hidden" role="group" aria-labelledby="questionnaire-heading">
+                <h5 class="roleplay-subheading" id="questionnaire-heading">Quick start: tell your buddy about you</h5>
+                <div id="questionnaire-fields" class="questionnaire-fields"></div>
+                <div class="custom-scenario-actions">
+                  <button type="button" id="questionnaire-save" class="primary-btn preset-form-btn">Save answers</button>
+                  <button type="button" id="questionnaire-skip" class="secondary-btn">Skip for now</button>
+                </div>
+                <p id="questionnaire-error" class="preset-error hidden" role="alert"></p>
+              </div>
+              <div id="questionnaire-summary" class="questionnaire-summary hidden">
+                <div class="learn-lines-header">
+                  <h5 class="roleplay-subheading">About you</h5>
+                  <button type="button" id="questionnaire-retake" class="secondary-btn save-preset-btn">↻ Retake questionnaire</button>
+                </div>
+                <dl id="questionnaire-answers" class="questionnaire-answers"></dl>
+              </div>
+              <h5 class="roleplay-subheading" id="subject-heading">Pick a subject</h5>
+              <div id="subject-list" class="scenario-list" role="group" aria-labelledby="subject-heading"></div>
+              <p id="custom-topics-label" class="helper-text custom-presets-label hidden">My topics</p>
+              <div id="custom-topic-list" class="scenario-list" role="group" aria-labelledby="custom-topics-label"></div>
+              <button type="button" id="custom-topic-btn" class="secondary-btn save-preset-btn" aria-expanded="false" aria-controls="custom-topic-form">＋ Custom topic</button>
+              <div id="custom-topic-form" class="custom-scenario-form hidden">
+                <label for="custom-topic-title">Topic</label>
+                <input type="text" id="custom-topic-title" class="text-input" maxlength="40" autocomplete="off" placeholder="e.g. Fractions, Guitar chords, Spanish basics" />
+                <label for="custom-topic-goal">What do you want to learn?</label>
+                <input type="text" id="custom-topic-goal" class="text-input" maxlength="160" autocomplete="off" placeholder="e.g. Add and subtract fractions without a calculator" />
+                <div class="custom-scenario-actions">
+                  <button type="button" id="custom-topic-save" class="primary-btn preset-form-btn">Save topic</button>
+                  <button type="button" id="custom-topic-cancel" class="secondary-btn">Cancel</button>
+                </div>
+                <p id="custom-topic-error" class="preset-error hidden" role="alert"></p>
+              </div>
+              <div id="subject-details" class="scenario-details hidden">
+                <p id="subject-summary" class="scenario-summary"></p>
+                <div class="learn-lines-header">
+                  <h5 class="roleplay-subheading" id="practice-heading">🎯 Practice prompts</h5>
+                  <button type="button" id="play-all-practice" class="secondary-btn save-preset-btn">▶ Play all</button>
+                </div>
+                <ul id="practice-prompts" class="learn-lines" aria-labelledby="practice-heading"></ul>
+              </div>
+            </div>
+          </section>
+          <fieldset class="customize-field ethnicity-fieldset">
+            <legend>Preferred ethnic background (optional)</legend>
+            <div id="ethnicity-options" class="checkbox-grid"></div>
+            <p id="ethnicity-note" class="helper-text">Saved as a preference for your buddy’s persona. Existing characters keep their own backgrounds.</p>
+          </fieldset>
+        </div>
+        <button id="download-btn" class="primary-btn">Download to Your Buddy Device</button>
+        <div id="post-download-actions" class="post-download-actions hidden">
+          <button type="button" id="change-personality-btn" class="secondary-btn">Change personality</button>
+          <button type="button" id="save-updated-btn" class="primary-btn">Save updated buddy</button>
+        </div>
+        <p id="save-status" class="device-note hidden" role="status"></p>
+        <p class="device-note">Low memory • Long battery • Always with you</p>
+      </section>
+    </main>
+    <footer><p>Buddy Companion • Web → Device Loader • Made for the United States • Kai included</p></footer>
+  </div>
+
+  <div id="success-overlay" class="success-overlay hidden">
+    <div class="success-box">
+      <div class="success-emoji">✅</div>
+      <h2>Buddy Ready!</h2>
+      <p id="success-message"></p>
+      <p class="device-note">Low-memory package downloaded.<br>Battery-efficient mode enabled.</p>
+      <button type="button" id="overlay-change-personality-btn" class="secondary-btn">Change personality</button>
+      <button id="done-btn" class="primary-btn">Done</button>
+    </div>
+  </div>
+
+  <div id="excite-burst" class="excite-burst" aria-hidden="true"></div>
+
+  <script src="js/buddies.js"></script>
+  <script src="js/origins.js"></script>
+  <script src="js/scenarios.js"></script>
+  <script src="js/subjects.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
